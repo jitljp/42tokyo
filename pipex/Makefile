@@ -18,7 +18,7 @@ INCLUDES   = -I inc -I libft
 LIBFT_DIR  = libft
 LIBFT_LIB  = $(LIBFT_DIR)/libft.a
 
-SRCS       = $(wildcard src/*.c)
+SRCS       = src/pipex.c  src/exit_utils.c src/utils.c
 OBJS       = $(SRCS:.c=.o)
 
 all: $(NAME)
