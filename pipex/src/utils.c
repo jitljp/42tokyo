@@ -6,20 +6,36 @@
 /*   By: mjeremy <mjeremy@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:46:06 by mjeremy           #+#    #+#             */
-/*   Updated: 2025/07/16 12:01:27 by mjeremy          ###   ########.fr       */
+/*   Updated: 2025/07/16 16:46:24 by mjeremy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void	wrap_up(pid_t pid, int	*fd)
+int	is_empty_cmd(char *cmd, char **env, int fd_to_close, pid_t pid)
 {
-	int	status;
+	int		i;
+	char	*cause;
 
-	close(fd[0]);
-	close(fd[1]);
-	waitpid(pid, &status, 0);
-	exit(WEXITSTATUS(status));
+	i = 0;
+	while (cmd[i] == ' ')
+		i++;
+	if (cmd[i] == '\0')
+	{
+		cause = ft_strdup("");
+		if (fd_to_close >= 0)
+			close(fd_to_close);
+		path_exit(127, cause, env, pid);
+	}
+	return (0);
+}
+
+void	setup_fds(int fd_in, int fd_out, int *pipe_fd)
+{
+	dup2(fd_in, STDIN_FILENO);
+	dup2(fd_out, STDOUT_FILENO);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
 }
 
 static char	*join_cmd(char *dir, char *cmd)
