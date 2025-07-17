@@ -1,45 +1,66 @@
 # **************************************************************************** #
 #                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: jeremy <jeremy@student.42tokyo.jp>         +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/07/15 18:15:00 by jeremy            #+#    #+#              #
-#    Updated: 2025/07/15 18:15:00 by jeremy           ###   ########.fr        #
+#                                                         :::      ::::::::   #
+#    Makefile                                           :+:      :+:    :+:   #
+#                                                    +:+ +:+         +:+      #
+#   By: mjeremy <mjeremy@student.42tokyo.jp>       +#+  +:+       +#+         #
+#                                                +#+#+#+#+#+   +#+            #
+#   Created: 2025/07/13 12:45:00 by mjeremy           #+#    #+#              #
+#   Updated: 2025/07/13 12:45:00 by mjeremy          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME       = pipex
-CC         = cc
-CFLAGS     = -Wall -Wextra -Werror
-INCLUDES   = -I inc -I libft
+NAME = pipex
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+INCLUDES = -I./inc -I./libft
 
-LIBFT_DIR  = libft
-LIBFT_LIB  = $(LIBFT_DIR)/libft.a
+# Source files
+SRC_DIR = src
+SRC = $(SRC_DIR)/pipex.c $(SRC_DIR)/utils.c $(SRC_DIR)/exit_utils.c
 
-SRCS       = src/pipex.c  src/exit_utils.c src/utils.c
-OBJS       = $(SRCS:.c=.o)
+# Object files
+OBJ_DIR = obj
+OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
+# Libft
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
+# Default target
 all: $(NAME)
 
-$(LIBFT_LIB):
-	cd $(LIBFT_DIR) && make
+# Create object directory
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
 
-$(NAME): $(LIBFT_LIB) $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_LIB) -o $(NAME)
+# Compile object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-src/%.o: src/%.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+# Compile libft
+$(LIBFT):
+	@make -C $(LIBFT_DIR)
 
+# Link everything together
+$(NAME): $(OBJ) $(LIBFT)
+	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
+	@echo "pipex compiled successfully"
+
+# Clean object files
 clean:
-	rm -f $(OBJS)
-	cd $(LIBFT_DIR) && make clean
+	@rm -rf $(OBJ_DIR)
+	@make -C $(LIBFT_DIR) clean
+	@echo "Object files cleaned"
 
+# Clean everything
 fclean: clean
-	rm -f $(NAME)
-	cd $(LIBFT_DIR) && make fclean
+	@rm -f $(NAME)
+	@make -C $(LIBFT_DIR) fclean
+	@echo "Everything cleaned"
 
+# Recompile everything
 re: fclean all
 
+# Phony targets
 .PHONY: all clean fclean re

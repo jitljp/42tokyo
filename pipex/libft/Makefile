@@ -1,46 +1,95 @@
-NAME	= libft.a
+NAME = libft.a
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
 
-CC		= cc
-CFLAGS	= -Wall -Wextra -Werror
-AR		= ar rcs
-RM		= rm -f
+# Directories
+SRCS_DIR = src
+INCLUDES_DIR = .
 
-SRCS	= ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c \
-	ft_isascii.c ft_isdigit.c ft_isprint.c ft_itoa.c ft_memchr.c \
-	ft_memcmp.c ft_memcpy.c ft_memmove.c ft_memset.c ft_putchar_fd.c \
-	ft_putendl_fd.c ft_putnbr_fd.c ft_putstr_fd.c ft_split.c ft_strchr.c \
-	ft_strdup.c ft_striteri.c ft_strjoin.c ft_strlcat.c ft_strlcpy.c \
-	ft_strlen.c ft_strmapi.c ft_strncmp.c ft_strnstr.c ft_strrchr.c \
-	ft_strtrim.c ft_substr.c ft_tolower.c ft_toupper.c
-OBJS	= $(SRCS:.c=.o)
+# Source files by category
+CHAR_SRCS = $(SRCS_DIR)/char/ft_isalnum.c \
+			$(SRCS_DIR)/char/ft_isalpha.c \
+			$(SRCS_DIR)/char/ft_isascii.c \
+			$(SRCS_DIR)/char/ft_isdigit.c \
+			$(SRCS_DIR)/char/ft_isprint.c \
+			$(SRCS_DIR)/char/ft_tolower.c \
+			$(SRCS_DIR)/char/ft_toupper.c
 
-BONUS_SRCS	= ft_lstadd_back_bonus.c ft_lstadd_front_bonus.c \
-	ft_lstclear_bonus.c ft_lstdelone_bonus.c ft_lstiter_bonus.c \
-	ft_lstlast_bonus.c ft_lstmap_bonus.c ft_lstnew_bonus.c \
-	ft_lstsize_bonus.c
-BONUS_OBJS	= $(BONUS_SRCS:.c=.o)
-BONUS_MARK = .bonus_done
+CONV_SRCS = $(SRCS_DIR)/conv/ft_atoi.c \
+			$(SRCS_DIR)/conv/ft_itoa.c
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+GNL_SRCS = $(SRCS_DIR)/gnl/get_next_line.c \
 
-$(NAME): $(OBJS)
-	$(AR) $(NAME) $(OBJS)
+IO_SRCS = $(SRCS_DIR)/io/ft_putchar_fd.c \
+		  $(SRCS_DIR)/io/ft_putendl_fd.c \
+		  $(SRCS_DIR)/io/ft_putnbr_fd.c \
+		  $(SRCS_DIR)/io/ft_putstr_fd.c
 
-$(BONUS_MARK): $(BONUS_OBJS) $(NAME)
-	$(AR) $(NAME) $(BONUS_OBJS)
-	touch $@
+LST_SRCS = $(SRCS_DIR)/lst/ft_lstadd_back.c \
+		   $(SRCS_DIR)/lst/ft_lstadd_front.c \
+		   $(SRCS_DIR)/lst/ft_lstclear.c \
+		   $(SRCS_DIR)/lst/ft_lstdelone.c \
+		   $(SRCS_DIR)/lst/ft_lstiter.c \
+		   $(SRCS_DIR)/lst/ft_lstlast.c \
+		   $(SRCS_DIR)/lst/ft_lstmap.c \
+		   $(SRCS_DIR)/lst/ft_lstnew.c \
+		   $(SRCS_DIR)/lst/ft_lstsize.c
 
+MEM_SRCS = $(SRCS_DIR)/mem/ft_bzero.c \
+		   $(SRCS_DIR)/mem/ft_calloc.c \
+		   $(SRCS_DIR)/mem/ft_memchr.c \
+		   $(SRCS_DIR)/mem/ft_memcmp.c \
+		   $(SRCS_DIR)/mem/ft_memcpy.c \
+		   $(SRCS_DIR)/mem/ft_memmove.c \
+		   $(SRCS_DIR)/mem/ft_memset.c
+
+PRINTF_SRCS = $(SRCS_DIR)/printf/ft_printf.c \
+			  $(SRCS_DIR)/printf/ft_printf_handle.c \
+			  $(SRCS_DIR)/printf/ft_printf_itoa_u.c \
+			  $(SRCS_DIR)/printf/ft_printf_put.c
+
+STR_SRCS = $(SRCS_DIR)/str/ft_split.c \
+		   $(SRCS_DIR)/str/ft_strchr.c \
+		   $(SRCS_DIR)/str/ft_strdup.c \
+		   $(SRCS_DIR)/str/ft_striteri.c \
+		   $(SRCS_DIR)/str/ft_strjoin.c \
+		   $(SRCS_DIR)/str/ft_strlcat.c \
+		   $(SRCS_DIR)/str/ft_strlcpy.c \
+		   $(SRCS_DIR)/str/ft_strlen.c \
+		   $(SRCS_DIR)/str/ft_strmapi.c \
+		   $(SRCS_DIR)/str/ft_strncmp.c \
+		   $(SRCS_DIR)/str/ft_strnstr.c \
+		   $(SRCS_DIR)/str/ft_strrchr.c \
+		   $(SRCS_DIR)/str/ft_strtrim.c \
+		   $(SRCS_DIR)/str/ft_substr.c
+
+# All source files
+SRCS = $(CHAR_SRCS) $(CONV_SRCS) $(GNL_SRCS) $(IO_SRCS) $(LST_SRCS) $(MEM_SRCS) $(PRINTF_SRCS) $(STR_SRCS)
+
+# Object files
+OBJS = $(SRCS:.c=.o)
+
+# Default target
 all: $(NAME)
 
-bonus: $(BONUS_MARK)
+# Build the library
+$(NAME): $(OBJS)
+	ar rcs $(NAME) $(OBJS)
 
+# Compile source files to object files
+%.o: %.c
+	$(CC) $(CFLAGS) -I$(INCLUDES_DIR) -c $< -o $@
+
+# Clean object files
 clean:
-	$(RM) $(OBJS) $(BONUS_OBJS)
+	rm -f $(OBJS)
 
+# Clean everything
 fclean: clean
-	$(RM) $(NAME)
+	rm -f $(NAME)
 
+# Rebuild everything
 re: fclean all
 
-.PHONY: all bonus clean fclean re
+# Phony targets
+.PHONY: all clean fclean re

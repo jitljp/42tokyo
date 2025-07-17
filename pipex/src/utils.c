@@ -6,7 +6,7 @@
 /*   By: mjeremy <mjeremy@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:46:06 by mjeremy           #+#    #+#             */
-/*   Updated: 2025/07/16 16:46:24 by mjeremy          ###   ########.fr       */
+/*   Updated: 2025/07/17 13:22:15 by mjeremy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	is_empty_cmd(char *cmd, char **env, int fd_to_close, pid_t pid)
 		i++;
 	if (cmd[i] == '\0')
 	{
-		cause = ft_strdup("");
+		cause = ft_strdup(cmd);
 		if (fd_to_close >= 0)
 			close(fd_to_close);
 		path_exit(127, cause, env, pid);
