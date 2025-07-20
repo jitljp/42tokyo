@@ -6,7 +6,7 @@
 /*   By: mjeremy <mjeremy@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:46:18 by mjeremy           #+#    #+#             */
-/*   Updated: 2025/07/20 12:13:11 by mjeremy          ###   ########.fr       */
+/*   Updated: 2025/07/20 12:55:47 by mjeremy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ static void	check_output_file_error(char *file_path)
 		dir_exists = (access(parent_dir, F_OK) == 0);
 		free(parent_dir);
 		if (!dir_exists)
-			exit(1);  // Changed from 3 to 1 to match bash
+			exit(3);
 	}
 	exit(1);
 }
@@ -158,5 +158,7 @@ int	main(int argc, char **argv, char **env)
 	waitpid(pid1, &status1, 0);
 	waitpid(pid2, &status2, 0);
 	print_errors(status1, status2, argv, env);
+	if (WEXITSTATUS(status2) == 3)
+		return (1);
 	return (WEXITSTATUS(status2));
 }
