@@ -6,7 +6,7 @@
 /*   By: mjeremy <mjeremy@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:46:06 by mjeremy           #+#    #+#             */
-/*   Updated: 2025/07/17 13:42:57 by mjeremy          ###   ########.fr       */
+/*   Updated: 2025/07/20 11:24:33 by mjeremy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ Checks if the command string is empty (contains only spaces).
    and exits via path_exit with code 127.
 - Returns 0 if the command is not empty.
 */
-int	is_empty_cmd(char *cmd, char **env, int fd_to_close, pid_t pid)
+int	is_empty_cmd(char *cmd, int fd_to_close, pid_t pid)
 {
 	int		i;
 	char	*cause;
@@ -33,9 +33,9 @@ int	is_empty_cmd(char *cmd, char **env, int fd_to_close, pid_t pid)
 	if (cmd[i] == '\0')
 	{
 		cause = ft_strdup(cmd);
-		if (fd_to_close >= 0)
-			close(fd_to_close);
-		path_exit(127, cause, env, 0);
+		close(fd_to_close);
+		free(cause);
+		exit(127);
 	}
 	return (0);
 }

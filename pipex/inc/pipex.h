@@ -28,13 +28,8 @@
 // Utility functions
 char	*get_cmd_path(char *cmd, char **env);
 void	free_split(char **arr);
-int		is_empty_cmd(char *cmd, char **env, int fd_to_close, pid_t pid);
+int		is_empty_cmd(char *cmd, int fd_to_close, pid_t pid);
 void	setup_fds(int fd_in, int fd_out, int *pipe_fd);
-// Error/exit utility functions
-void	exit_message(int code, char *msg);
-void	perror_exit(int code, char *cause, pid_t wait_pid);
-void	path_exit(int code, char *cmd, char **env, pid_t wait_pid);
-void	exec_exit(char **cmd_split, char *path, pid_t wait_pid);
 // Error handling functions
 void	print_cmd_error(char *cmd, char **env);
 void	print_errors(int status1, int status2, char **argv, char **env);

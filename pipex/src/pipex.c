@@ -6,7 +6,7 @@
 /*   By: mjeremy <mjeremy@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:46:18 by mjeremy           #+#    #+#             */
-/*   Updated: 2025/07/17 13:40:07 by mjeremy          ###   ########.fr       */
+/*   Updated: 2025/07/20 12:13:11 by mjeremy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,12 @@ static void	execute_cmd(char **cmd, char **env)
 	{
 		cmd_dup = ft_strdup(cmd[0]);
 		free_split(cmd);
-		path_exit(127, cmd_dup, env, 0);
+		free(cmd_dup);
+		exit(127);
 	}
 	execve(path, cmd, env);
-	exec_exit(cmd, path, 0);
+	free_split(cmd);
+	exit(127);
 }
 
 /*
@@ -58,14 +60,43 @@ void	process1(int *fd, char **argv, char **env)
 
 	infile = open(argv[1], O_RDONLY);
 	if (infile < 0)
-		perror_exit(1, argv[1], 0);
-	if (is_empty_cmd(argv[2], env, infile, 0))
-		return ;
+	{
+		if (access(argv[1], F_OK) != 0)
+			exit(2);
+		else
+			exit(1);
+	}
+	is_empty_cmd(argv[2], infile, 0);
 	cmd = ft_split(argv[2], ' ');
 	if (!cmd)
 		exit(1);
 	setup_fds(infile, fd[1], fd);
 	execute_cmd(cmd, env);
+}
+
+/*
+Handles output file error checking for non-existent directories.
+*/
+static void	check_output_file_error(char *file_path)
+{
+	char	*last_slash;
+	char	*parent_dir;
+	char	temp;
+	int		dir_exists;
+
+	last_slash = ft_strrchr(file_path, '/');
+	if (last_slash && last_slash != file_path)
+	{
+		temp = *last_slash;
+		*last_slash = '\0';
+		parent_dir = ft_strdup(file_path);
+		*last_slash = temp;
+		dir_exists = (access(parent_dir, F_OK) == 0);
+		free(parent_dir);
+		if (!dir_exists)
+			exit(1);  // Changed from 3 to 1 to match bash
+	}
+	exit(1);
 }
 
 /*
@@ -86,9 +117,8 @@ void	process2(int *fd, char **argv, char **env)
 
 	outfile = open(argv[4], O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	if (outfile < 0)
-		perror_exit(1, argv[4], 0);
-	if (is_empty_cmd(argv[3], env, outfile, 0))
-		return ;
+		check_output_file_error(argv[4]);
+	is_empty_cmd(argv[3], outfile, 0);
 	cmd = ft_split(argv[3], ' ');
 	if (!cmd)
 		exit(1);
@@ -118,7 +148,11 @@ int	main(int argc, char **argv, char **env)
 	int		status2;
 
 	if (argc != 5)
-		exit_message(1, "Usage: ./pipex infile cmd1 cmd2 outfile\n");
+	{
+		ft_putstr_fd("Usage: ./pipex infile cmd1 cmd2 outfile\n",
+			STDERR_FILENO);
+		exit(1);
+	}
 	create_first_child(fd, argv, env, &pid1);
 	create_second_child(fd, argv, env, &pid2);
 	waitpid(pid1, &status1, 0);

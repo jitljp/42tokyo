@@ -45,6 +45,12 @@ static void	handle_second_process_error(int status2, char **argv, char **env)
 	{
 		if (WEXITSTATUS(status2) == 127)
 			print_cmd_error(argv[3], env);
+		else if (WEXITSTATUS(status2) == 3)
+		{
+			ft_putstr_fd("bash: ", STDERR_FILENO);
+			ft_putstr_fd(argv[4], STDERR_FILENO);
+			ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		}
 		else
 		{
 			ft_putstr_fd("bash: ", STDERR_FILENO);
