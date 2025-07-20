@@ -17,7 +17,7 @@ INCLUDES = -I./inc -I./libft
 
 # Source files
 SRC_DIR = src
-SRC = $(SRC_DIR)/pipex.c $(SRC_DIR)/utils.c $(SRC_DIR)/exit_utils.c
+SRC = $(SRC_DIR)/pipex.c $(SRC_DIR)/utils.c $(SRC_DIR)/exit_utils.c $(SRC_DIR)/error_handler.c $(SRC_DIR)/child_processes.c $(SRC_DIR)/error_printer.c
 
 # Object files
 OBJ_DIR = obj

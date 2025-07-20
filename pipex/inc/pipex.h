@@ -6,7 +6,7 @@
 /*   By: mjeremy <mjeremy@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 12:18:50 by mjeremy           #+#    #+#             */
-/*   Updated: 2025/07/16 17:22:53 by mjeremy          ###   ########.fr       */
+/*   Updated: 2025/07/19 13:42:50 by mjeremy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <unistd.h>
 // perror
 # include <stdio.h>
-// open and file control flags (O_RDONLY, O_CREAT, O_WRONLY) 
+// open and file control flags (O_RDONLY, O_CREAT, O_WRONLY)
 # include <fcntl.h>
 // free, exit, free_split, exit_message, perror_exit, path_exit, exec_exit
 # include <stdlib.h>
@@ -26,7 +26,6 @@
 # include "libft.h"
 
 // Utility functions
-void	wrap_up(pid_t pid1, int *fd);
 char	*get_cmd_path(char *cmd, char **env);
 void	free_split(char **arr);
 int		is_empty_cmd(char *cmd, char **env, int fd_to_close, pid_t pid);
@@ -36,5 +35,13 @@ void	exit_message(int code, char *msg);
 void	perror_exit(int code, char *cause, pid_t wait_pid);
 void	path_exit(int code, char *cmd, char **env, pid_t wait_pid);
 void	exec_exit(char **cmd_split, char *path, pid_t wait_pid);
+// Error handling functions
+void	print_cmd_error(char *cmd, char **env);
+void	print_errors(int status1, int status2, char **argv, char **env);
+// Child process functions
+void	create_first_child(int *fd, char **argv, char **env, pid_t *pid1);
+void	create_second_child(int *fd, char **argv, char **env, pid_t *pid2);
+void	process1(int *fd, char **argv, char **env);
+void	process2(int *fd, char **argv, char **env);
 
 #endif

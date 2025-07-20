@@ -6,63 +6,66 @@
 /*   By: mjeremy <mjeremy@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 19:47:52 by mjeremy           #+#    #+#             */
-/*   Updated: 2025/07/16 12:01:25 by mjeremy          ###   ########.fr       */
+/*   Updated: 2025/07/20 09:47:45 by mjeremy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
+/*
+Prints an error message to standard error and exits the program.
+
+- Outputs the provided message to STDERR_FILENO.
+- Terminates the program with the specified exit code.
+*/
 void	exit_message(int code, char *msg)
 {
 	ft_putstr_fd(msg, STDERR_FILENO);
 	exit(code);
 }
 
+/*
+Handles perror-style exit.
+
+- Exits the program with the specified code.
+- Error message will be printed by parent process.
+- Uses exit code 2 for "No such file or directory" and 1 for "Permission denied".
+*/
 void	perror_exit(int code, char *cause, pid_t wait_pid)
 {
-	if (wait_pid > 0)
-		waitpid(wait_pid, NULL, 0);
-	ft_putstr_fd("bash: ", STDERR_FILENO);
-	perror(cause);
-	exit(code);
+	(void)wait_pid;
+	(void)code;
+	if (access(cause, F_OK) != 0)
+		exit(2);
+	else
+		exit(1);
 }
 
+/*
+Handles exit for command path errors.
+
+- Exits with code 127 (command not found).
+- Error message will be printed by parent process.
+*/
 void	path_exit(int code, char *cmd, char **env, pid_t wait_pid)
 {
-	int	i;
-	int	has_slash;
-
-	if (wait_pid > 0)
-		waitpid(wait_pid, NULL, 0);
-	i = 0;
-	while (env[i] && ft_strncmp(env[i], "PATH=", 5))
-		i++;
-	has_slash = (ft_strchr(cmd, '/') != NULL);
-	if (!env[i] || has_slash)
-	{
-		ft_putstr_fd("bash: ", STDERR_FILENO);
-		ft_putstr_fd(cmd, STDERR_FILENO);
-		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
-	}
-	else
-	{
-		ft_putstr_fd(cmd, STDERR_FILENO);
-		ft_putstr_fd(": command not found\n", STDERR_FILENO);
-	}
+	(void)wait_pid;
+	(void)env;
 	free(cmd);
 	exit(code);
 }
 
+/*
+Handles exit after a failed execve call.
+
+- Frees the command split array.
+- Exits with code 127 (command not found).
+- Error message will be printed by parent process.
+*/
 void	exec_exit(char **cmd_split, char *path, pid_t wait_pid)
 {
-	char	*dup;
-
-	if (wait_pid > 0)
-		waitpid(wait_pid, NULL, 0);
-	dup = ft_strdup(path);
+	(void)wait_pid;
+	(void)path;
 	free_split(cmd_split);
-	ft_putstr_fd("bash: ", STDERR_FILENO);
-	perror(dup);
-	free(dup);
 	exit(127);
 }
